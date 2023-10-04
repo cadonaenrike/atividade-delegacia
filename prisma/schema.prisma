@@ -16,7 +16,7 @@ model Criminoso {
   armas Armas[]
 
   dtCriacao DateTime @default(now())
-  dtAtuali DateTime
+  dtAtuali DateTime @updatedAt
 
 
   @@map("criminoso")
