@@ -1,14 +1,15 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
-import repository from "./database/prisma.database";
 import { crimesRoutes } from "./routes/crimes.routes";
 import { criminosoRoutes } from "./routes/criminoso.routes";
 import { armaRoutes } from "./routes/arma.routes";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors);
 
 const port = process.env.PORT;
 // criando o crime
