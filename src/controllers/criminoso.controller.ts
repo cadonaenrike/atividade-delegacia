@@ -3,9 +3,18 @@ import criminosoService from "../services/criminoso.service";
 
 class CriminosoController {
   public async index(req: Request, res: Response) {
-    const result = await criminosoService.list();
-
-    return res.status(result.code).send(result);
+    try {
+      const criminosos = await criminosoService.listCriminosos();
+      return res.status(200).json({
+        ok: true,
+        data: criminosos,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Erro ao listar",
+      });
+    }
   }
 
   public async create(req: Request, res: Response) {
@@ -13,31 +22,130 @@ class CriminosoController {
       const { nomeCompleto, cpf } = req.body;
 
       if (!nomeCompleto || !cpf) {
-        return res.status(400).send({
+        return res.status(400).json({
           ok: false,
           message: "Dados incorretos",
         });
       }
 
-      const result = await criminosoService.create({
+      const novoCriminoso = await criminosoService.createCriminoso({
         nomeCompleto,
         cpf,
       });
 
-      return res.status(201).send({
+      return res.status(201).json({
         ok: true,
         message: "Criminoso cadastrado!",
-        data: result,
+        data: novoCriminoso,
       });
-    } catch (error: any) {
-      res.status(500).send({
+    } catch (error) {
+      return res.status(500).json({
         ok: false,
-        message: error.toString(),
+        message: "Erro ao Cadastrar",
       });
     }
   }
-  public show(req: Request, res: Response) {}
-  public update(req: Request, res: Response) {}
-  public delete(req: Request, res: Response) {}
+
+  public async show(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).json({
+          ok: false,
+          message: "ID do criminoso não fornecido",
+        });
+      }
+
+      const criminoso = await criminosoService.getCriminosoById(id);
+
+      if (!criminoso) {
+        return res.status(404).json({
+          ok: false,
+          message: "Criminoso não encontrado",
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        data: criminoso,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Erro",
+      });
+    }
+  }
+
+  public async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { nomeCompleto, cpf } = req.body;
+
+      if (!id || !nomeCompleto || !cpf) {
+        return res.status(400).json({
+          ok: false,
+          message: "Dados incorretos",
+        });
+      }
+
+      const updatedCriminoso = await criminosoService.updateCriminoso(id, {
+        nomeCompleto,
+        cpf,
+      });
+
+      if (!updatedCriminoso) {
+        return res.status(404).json({
+          ok: false,
+          message: "Criminoso não encontrado",
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        message: "Criminoso atualizado com sucesso",
+        data: updatedCriminoso,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Erro ao Atualizar",
+      });
+    }
+  }
+
+  public async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).json({
+          ok: false,
+          message: "ID do criminoso não fornecido",
+        });
+      }
+
+      const deletedCriminoso = await criminosoService.deleteCriminoso(id);
+
+      if (!deletedCriminoso) {
+        return res.status(404).json({
+          ok: false,
+          message: "Criminoso não encontrado",
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        message: "Criminoso excluído com sucesso",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Erro ao Deletar",
+      });
+    }
+  }
 }
+
 export default CriminosoController;

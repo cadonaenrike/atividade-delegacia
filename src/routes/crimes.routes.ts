@@ -6,8 +6,8 @@ export const crimesRoutes = () => {
 
   router.get("/", new CrimeController().index);
   router.post("/", new CrimeController().create);
-  // router.delete("/:id", new );
-  // router.put("/:id", new);
+  router.delete("/:id", new CrimeController().delete);
+  router.put("/:id", new CrimeController().update);
 
   return router;
 };
