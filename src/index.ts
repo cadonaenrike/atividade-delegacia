@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, request } from "express";
 import * as dotenv from "dotenv";
 import { crimesRoutes } from "./routes/crimes.routes";
 import { criminosoRoutes } from "./routes/criminoso.routes";
@@ -9,10 +9,13 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors);
+app.use(cors());
 
 const port = process.env.PORT;
 // criando o crime
+app.get("/", (req: Request, res: Response) => {
+  res.sendStatus(200);
+});
 app.use("/crimes", crimesRoutes());
 // criando o criminoso
 app.use("/criminoso", criminosoRoutes());
